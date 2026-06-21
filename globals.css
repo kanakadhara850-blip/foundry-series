@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Share Tech Mono", monospace;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-body: "Inter", sans-serif;
+}
+
+html,
+body {
+  background: #050505;
+  color: #ffffff;
+  overscroll-behavior: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ---------- Atmospheric layer ---------- */
+/* Low-opacity drifting fog. Two large radial-gradient blobs animated
+   with the `drift` keyframe from tailwind.config — cheap (pure CSS,
+   no JS, no images) and performance-friendly even on mobile. */
+.fog-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.fog-blob {
+  position: absolute;
+  width: 140vw;
+  height: 140vh;
+  top: -20vh;
+  left: -20vw;
+  background: radial-gradient(
+      circle at 30% 30%,
+      rgba(57, 255, 20, 0.05),
+      transparent 55%
+    ),
+    radial-gradient(circle at 70% 70%, rgba(0, 255, 127, 0.04), transparent 50%);
+  filter: blur(40px);
+  opacity: 0.8;
+}
+
+/* Faint scanline texture over everything, like a CRT operations
+   monitor. Kept extremely subtle (3% opacity) so it reads as texture,
+   not noise. */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.025) 0px,
+    rgba(255, 255, 255, 0.025) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.5;
+}
+
+/* Floating data particles — small dots drifting upward, built with
+   box-shadow trick to render many particles from a single element. */
+.particle-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #39ff14;
+  opacity: 0.35;
+  box-shadow: 0 0 6px rgba(57, 255, 20, 0.6);
+  animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-110vh) translateX(20px);
+    opacity: 0;
+  }
+}
+
+/* ---------- Glassmorphism panel ---------- */
+.glass-panel {
+  background: rgba(17, 17, 17, 0.55);
+  border: 1px solid rgba(57, 255, 20, 0.18);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+}
+
+.glass-panel-active {
+  border-color: rgba(57, 255, 20, 0.45);
+  box-shadow: 0 0 30px rgba(57, 255, 20, 0.18), 0 4px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Custom scrollbar to match the dark console theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(57, 255, 20, 0.35);
+  border-radius: 4px;
+}
+
+/* Digit flip / tick effect for countdown numerals */
+.digit-tick {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fog-blob,
+  .particle,
+  .digit-tick {
+    animation: none !important;
+    transition: none !important;
+  }
+}
